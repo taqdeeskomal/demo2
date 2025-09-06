@@ -1,0 +1,9 @@
+{
+	"name": "adfcourselearnig",
+	"location": "southeastasia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "3621a4b3-ed6c-429d-a17c-b479c8071e23",
+		"tenantId": "1465a828-a512-44fe-88e8-e3783fc939b9"
+	}
+}
