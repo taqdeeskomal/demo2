@@ -1,0 +1,56 @@
+{
+	"name": "007_ForEachActivity_SetVaribleActivity",
+	"properties": {
+		"activities": [
+			{
+				"name": "ForEachNumber",
+				"type": "ForEach",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@pipeline().parameters.Number",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Set variable",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "y",
+								"value": {
+									"value": "@item()",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"Number": {
+				"type": "array",
+				"defaultValue": [
+					1,
+					2,
+					3,
+					4
+				]
+			}
+		},
+		"variables": {
+			"y": {
+				"type": "Integer"
+			}
+		},
+		"annotations": []
+	}
+}
