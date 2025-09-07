@@ -41,7 +41,7 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/007_ForEachActivity_SetVaribleActivity')]",
+			"name": "[concat(parameters('factoryName'), '/008_ForEachActivity_SetVaribleActivity')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
