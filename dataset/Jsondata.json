@@ -1,0 +1,33 @@
+{
+	"name": "Jsondata",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "Employees .json",
+				"folderPath": "output",
+				"fileSystem": "adf-learning-material"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"EmployeeKey": {
+					"type": "integer"
+				},
+				"EmpName": {
+					"type": "string"
+				},
+				"Contact": {
+					"type": "string"
+				}
+			}
+		}
+	}
+}
