@@ -1,0 +1,34 @@
+{
+	"name": "016_filter_activity",
+	"properties": {
+		"activities": [
+			{
+				"name": "Filter activity",
+				"type": "Filter",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@variables('x')",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@greater(item(),10)",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"variables": {
+			"x": {
+				"type": "Array",
+				"defaultValue": [
+					10,
+					20,
+					30
+				]
+			}
+		},
+		"annotations": []
+	}
+}
