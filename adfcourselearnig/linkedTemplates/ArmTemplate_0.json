@@ -346,6 +346,41 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTable2')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "employee_id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "employee_name",
+						"type": "varchar"
+					},
+					{
+						"name": "contact",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Employee"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/AzureSqlTables')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -860,28 +895,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Tablecreatedusingquery')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSqlDatabase",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "sales_new"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/YearWise')]",
+			"name": "[concat(parameters('factoryName'), '/Jsondata')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -890,36 +904,29 @@
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
-				"type": "DelimitedText",
+				"type": "Json",
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"folderPath": "YearWise",
+						"fileName": "Employees .json",
+						"folderPath": "output",
 						"fileSystem": "adf-learning-material"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "DATE",
-						"type": "String"
-					},
-					{
-						"name": "COUNTRY",
-						"type": "String"
-					},
-					{
-						"name": "PRODUCT",
-						"type": "String"
-					},
-					{
-						"name": "SALES",
-						"type": "String"
 					}
-				]
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"EmployeeKey": {
+							"type": "integer"
+						},
+						"EmpName": {
+							"type": "string"
+						},
+						"Contact": {
+							"type": "string"
+						}
+					}
+				}
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage')]"
