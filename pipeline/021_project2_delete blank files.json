@@ -24,6 +24,7 @@
 					],
 					"storeSettings": {
 						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
 						"enablePartitionDiscovery": false
 					},
 					"formatSettings": {
@@ -102,6 +103,7 @@
 								],
 								"storeSettings": {
 									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
 									"enablePartitionDiscovery": false
 								},
 								"formatSettings": {
@@ -141,19 +143,14 @@
 										"userProperties": [],
 										"typeProperties": {
 											"dataset": {
-												"referenceName": "deletefile",
-												"type": "DatasetReference",
-												"parameters": {
-													"deletefilename": {
-														"value": "@variables('filename')",
-														"type": "Expression"
-													}
-												}
+												"referenceName": "Deleteblankfiles",
+												"type": "DatasetReference"
 											},
 											"enableLogging": false,
 											"storeSettings": {
 												"type": "AzureBlobFSReadSettings",
 												"recursive": true,
+												"wildcardFileName": "*",
 												"enablePartitionDiscovery": false
 											}
 										}
