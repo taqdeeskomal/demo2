@@ -1,0 +1,27 @@
+{
+	"name": "deletefile",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"deletefilename": {
+				"type": "array"
+			}
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().deletefilename",
+					"type": "Expression"
+				},
+				"folderPath": "YearWise",
+				"fileSystem": "adf-learning-material"
+			}
+		}
+	}
+}
