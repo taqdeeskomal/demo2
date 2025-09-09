@@ -1496,6 +1496,251 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/019_pl_copydata_dl_db__NestedJSON_SQL_copy1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data Nested JSON to SQL",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['EmployeeKey']"
+										},
+										"sink": {
+											"name": "employee_id",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"path": "$['EmpName']"
+										},
+										"sink": {
+											"name": "employee_name",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['Contact']['Email']"
+										},
+										"sink": {
+											"name": "email",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['Contact']['Phone']"
+										},
+										"sink": {
+											"name": "contact",
+											"type": "String"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "NestedJson",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "NestedJsontoSQL",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/NestedJson')]",
+				"[concat(variables('factoryId'), '/datasets/NestedJsontoSQL')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/020_copydata_iffileexist')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "file exist check",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "CSVFile",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"fieldList": [
+								"exists"
+							],
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "DelimitedTextReadSettings"
+							}
+						}
+					},
+					{
+						"name": "If Condition1",
+						"type": "IfCondition",
+						"dependsOn": [
+							{
+								"activity": "file exist check",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"expression": {
+								"value": "@activity('file exist check').output.exists",
+								"type": "Expression"
+							},
+							"ifFalseActivities": [
+								{
+									"name": "Failif file not exist",
+									"type": "Fail",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"message": "file not exist",
+										"errorCode": "404"
+									}
+								}
+							],
+							"ifTrueActivities": [
+								{
+									"name": "Copy datadl to dl",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "DelimitedTextSource",
+											"storeSettings": {
+												"type": "AzureBlobFSReadSettings",
+												"recursive": true,
+												"enablePartitionDiscovery": false
+											},
+											"formatSettings": {
+												"type": "DelimitedTextReadSettings"
+											}
+										},
+										"sink": {
+											"type": "DelimitedTextSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "DelimitedTextWriteSettings",
+												"quoteAllText": true,
+												"fileExtension": ".txt"
+											}
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "CSVFile",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "Fileexistchecked",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/CSVFile')]",
+				"[concat(variables('factoryId'), '/datasets/Fileexistchecked')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabase')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -2114,6 +2359,319 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/Fileexistchecked')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "output",
+						"fileSystem": "adf-learning-material"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "invoiceId",
+						"type": "String"
+					},
+					{
+						"name": "billingAccountId",
+						"type": "String"
+					},
+					{
+						"name": "billingAccountName",
+						"type": "String"
+					},
+					{
+						"name": "previousInvoiceId",
+						"type": "String"
+					},
+					{
+						"name": "billingProfileId",
+						"type": "String"
+					},
+					{
+						"name": "billingProfileName",
+						"type": "String"
+					},
+					{
+						"name": "invoiceSectionId",
+						"type": "String"
+					},
+					{
+						"name": "invoiceSectionName",
+						"type": "String"
+					},
+					{
+						"name": "partnerTenantId",
+						"type": "String"
+					},
+					{
+						"name": "partnerName",
+						"type": "String"
+					},
+					{
+						"name": "resellerName",
+						"type": "String"
+					},
+					{
+						"name": "resellerMpnId",
+						"type": "String"
+					},
+					{
+						"name": "customerTenantId",
+						"type": "String"
+					},
+					{
+						"name": "customerName",
+						"type": "String"
+					},
+					{
+						"name": "costCenter",
+						"type": "String"
+					},
+					{
+						"name": "billingPeriodStartDate",
+						"type": "String"
+					},
+					{
+						"name": "billingPeriodEndDate",
+						"type": "String"
+					},
+					{
+						"name": "servicePeriodStartDate",
+						"type": "String"
+					},
+					{
+						"name": "servicePeriodEndDate",
+						"type": "String"
+					},
+					{
+						"name": "date",
+						"type": "String"
+					},
+					{
+						"name": "serviceFamily",
+						"type": "String"
+					},
+					{
+						"name": "productOrderId",
+						"type": "String"
+					},
+					{
+						"name": "productOrderName",
+						"type": "String"
+					},
+					{
+						"name": "consumedService",
+						"type": "String"
+					},
+					{
+						"name": "meterId",
+						"type": "String"
+					},
+					{
+						"name": "meterName",
+						"type": "String"
+					},
+					{
+						"name": "meterCategory",
+						"type": "String"
+					},
+					{
+						"name": "meterSubCategory",
+						"type": "String"
+					},
+					{
+						"name": "meterRegion",
+						"type": "String"
+					},
+					{
+						"name": "productId",
+						"type": "String"
+					},
+					{
+						"name": "product",
+						"type": "String"
+					},
+					{
+						"name": "subscriptionId",
+						"type": "String"
+					},
+					{
+						"name": "subscriptionName",
+						"type": "String"
+					},
+					{
+						"name": "publisherType",
+						"type": "String"
+					},
+					{
+						"name": "publisherId",
+						"type": "String"
+					},
+					{
+						"name": "publisherName",
+						"type": "String"
+					},
+					{
+						"name": "resourceGroupName",
+						"type": "String"
+					},
+					{
+						"name": "resourceId",
+						"type": "String"
+					},
+					{
+						"name": "resourceLocation",
+						"type": "String"
+					},
+					{
+						"name": "location",
+						"type": "String"
+					},
+					{
+						"name": "effectivePrice",
+						"type": "String"
+					},
+					{
+						"name": "quantity",
+						"type": "String"
+					},
+					{
+						"name": "unitOfMeasure",
+						"type": "String"
+					},
+					{
+						"name": "chargeType",
+						"type": "String"
+					},
+					{
+						"name": "billingCurrency",
+						"type": "String"
+					},
+					{
+						"name": "pricingCurrency",
+						"type": "String"
+					},
+					{
+						"name": "costInBillingCurrency",
+						"type": "String"
+					},
+					{
+						"name": "costInPricingCurrency",
+						"type": "String"
+					},
+					{
+						"name": "costInUsd",
+						"type": "String"
+					},
+					{
+						"name": "paygCostInBillingCurrency",
+						"type": "String"
+					},
+					{
+						"name": "paygCostInUsd",
+						"type": "String"
+					},
+					{
+						"name": "exchangeRatePricingToBilling",
+						"type": "String"
+					},
+					{
+						"name": "exchangeRateDate",
+						"type": "String"
+					},
+					{
+						"name": "isAzureCreditEligible",
+						"type": "String"
+					},
+					{
+						"name": "serviceInfo1",
+						"type": "String"
+					},
+					{
+						"name": "serviceInfo2",
+						"type": "String"
+					},
+					{
+						"name": "additionalInfo",
+						"type": "String"
+					},
+					{
+						"name": "tags",
+						"type": "String"
+					},
+					{
+						"name": "partnerEarnedCreditRate",
+						"type": "String"
+					},
+					{
+						"name": "partnerEarnedCreditApplied",
+						"type": "String"
+					},
+					{
+						"name": "payGPrice",
+						"type": "String"
+					},
+					{
+						"name": "frequency",
+						"type": "String"
+					},
+					{
+						"name": "term",
+						"type": "String"
+					},
+					{
+						"name": "reservationId",
+						"type": "String"
+					},
+					{
+						"name": "reservationName",
+						"type": "String"
+					},
+					{
+						"name": "pricingModel",
+						"type": "String"
+					},
+					{
+						"name": "unitPrice",
+						"type": "String"
+					},
+					{
+						"name": "costAllocationRuleName",
+						"type": "String"
+					},
+					{
+						"name": "provider",
+						"type": "String"
+					},
+					{
+						"name": "benefitId",
+						"type": "String"
+					},
+					{
+						"name": "benefitName",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Json')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -2198,6 +2756,91 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/NestedJson')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "EmployeesNested.json",
+						"folderPath": "output",
+						"fileSystem": "adf-learning-material"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"EmployeeKey": {
+							"type": "integer"
+						},
+						"EmpName": {
+							"type": "string"
+						},
+						"Contact": {
+							"type": "object",
+							"properties": {
+								"Email": {
+									"type": "string"
+								},
+								"Phone": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/NestedJsontoSQL')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "employee_id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "employee_name",
+						"type": "varchar"
+					},
+					{
+						"name": "email",
+						"type": "nvarchar"
+					},
+					{
+						"name": "contact",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Employeecontact"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Tablecreatedusingquery')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -2265,6 +2908,51 @@
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/createdusingsqlsp')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "Input",
+						"fileSystem": "adf-learning-material"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "DATE",
+						"type": "String"
+					},
+					{
+						"name": "COUNTRY",
+						"type": "String"
+					},
+					{
+						"name": "PRODUCT",
+						"type": "String"
+					},
+					{
+						"name": "SALES",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/csvfileexistcheck')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -2834,101 +3522,6 @@
 				}
 			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/01_pl_copydata_dl_db__JSON_SQL_copy1')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy data JSON to SQL",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "JsonSource",
-								"storeSettings": {
-									"type": "AzureBlobFSReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "JsonReadSettings"
-								}
-							},
-							"sink": {
-								"type": "AzureSqlSink",
-								"writeBehavior": "insert",
-								"sqlWriterUseTableLock": false
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"path": "$['EmployeeKey']"
-										},
-										"sink": {
-											"name": "employee_id",
-											"type": "Int32"
-										}
-									},
-									{
-										"source": {
-											"path": "$['EmpName']"
-										},
-										"sink": {
-											"name": "employee_name",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"path": "$['Contact']"
-										},
-										"sink": {
-											"name": "contact",
-											"type": "String"
-										}
-									}
-								]
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "Jsondata",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "AzureSqlTable2",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/Jsondata')]",
-				"[concat(variables('factoryId'), '/datasets/AzureSqlTable2')]"
-			]
 		}
 	]
 }
