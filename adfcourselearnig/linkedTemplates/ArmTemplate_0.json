@@ -499,11 +499,20 @@
 					"referenceName": "AzureDataLakeStorage",
 					"type": "LinkedServiceReference"
 				},
+				"parameters": {
+					"GetSizeoffiles": {
+						"type": "string"
+					}
+				},
 				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().GetSizeoffiles",
+							"type": "Expression"
+						},
 						"folderPath": "YearWise",
 						"fileSystem": "adf-learning-material"
 					},

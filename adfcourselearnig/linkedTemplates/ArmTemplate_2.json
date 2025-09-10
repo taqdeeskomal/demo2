@@ -1072,7 +1072,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataset": {
-								"referenceName": "Deleteblankfiles",
+								"referenceName": "YearWise",
 								"type": "DatasetReference",
 								"parameters": {}
 							},
@@ -1090,35 +1090,11 @@
 						}
 					},
 					{
-						"name": "Set variable1",
-						"type": "SetVariable",
-						"dependsOn": [
-							{
-								"activity": "Get Metadata file name",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"variableName": "filename",
-							"value": {
-								"value": "@activity('Get Metadata file name').output.childItems",
-								"type": "Expression"
-							}
-						}
-					},
-					{
-						"name": "ForEach1",
+						"name": "for each file to delete",
 						"type": "ForEach",
 						"dependsOn": [
 							{
-								"activity": "Set variable1",
+								"activity": "Filter Files only",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -1127,53 +1103,17 @@
 						"userProperties": [],
 						"typeProperties": {
 							"items": {
-								"value": "@activity('Get Metadata file name').output.childItems",
+								"value": "@activity('Filter Files only').output.value",
 								"type": "Expression"
 							},
 							"isSequential": true,
 							"activities": [
 								{
-									"name": "Get Metadata1",
-									"type": "GetMetadata",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"dataset": {
-											"referenceName": "DelimitedText",
-											"type": "DatasetReference",
-											"parameters": {
-												"sourcefilename": {
-													"value": "@item().name",
-													"type": "Expression"
-												}
-											}
-										},
-										"fieldList": [
-											"size"
-										],
-										"storeSettings": {
-											"type": "AzureBlobFSReadSettings",
-											"recursive": true,
-											"enablePartitionDiscovery": false
-										},
-										"formatSettings": {
-											"type": "DelimitedTextReadSettings"
-										}
-									}
-								},
-								{
 									"name": "If Condition1",
 									"type": "IfCondition",
 									"dependsOn": [
 										{
-											"activity": "Get Metadata1",
+											"activity": "Set variable2",
 											"dependencyConditions": [
 												"Succeeded"
 											]
@@ -1200,10 +1140,10 @@
 												"userProperties": [],
 												"typeProperties": {
 													"dataset": {
-														"referenceName": "deletefile",
+														"referenceName": "DelimitedText",
 														"type": "DatasetReference",
 														"parameters": {
-															"deletefilename": {
+															"sourcefilename": {
 																"value": "@variables('filename')",
 																"type": "Expression"
 															}
@@ -1213,14 +1153,122 @@
 													"storeSettings": {
 														"type": "AzureBlobFSReadSettings",
 														"recursive": true,
+														"wildcardFileName": "*",
 														"enablePartitionDiscovery": false
 													}
 												}
 											}
 										]
 									}
+								},
+								{
+									"name": "Set variable1",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"policy": {
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "filename",
+										"value": {
+											"value": "@item().name",
+											"type": "Expression"
+										}
+									}
+								},
+								{
+									"name": "Get Metadata Size",
+									"type": "GetMetadata",
+									"dependsOn": [
+										{
+											"activity": "Set variable1",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataset": {
+											"referenceName": "Deleteblankfiles",
+											"type": "DatasetReference",
+											"parameters": {
+												"GetSizeoffiles": {
+													"value": "@variables('filename')",
+													"type": "Expression"
+												}
+											}
+										},
+										"fieldList": [
+											"size"
+										],
+										"storeSettings": {
+											"type": "AzureBlobFSReadSettings",
+											"recursive": true,
+											"enablePartitionDiscovery": false
+										},
+										"formatSettings": {
+											"type": "DelimitedTextReadSettings"
+										}
+									}
+								},
+								{
+									"name": "Set variable2",
+									"type": "SetVariable",
+									"dependsOn": [
+										{
+											"activity": "Get Metadata Size",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "size",
+										"value": {
+											"value": "@activity('Get Metadata Size').output.size",
+											"type": "Expression"
+										}
+									}
 								}
 							]
+						}
+					},
+					{
+						"name": "Filter Files only",
+						"type": "Filter",
+						"dependsOn": [
+							{
+								"activity": "Get Metadata file name",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Get Metadata file name').output.childItems",
+								"type": "Expression"
+							},
+							"condition": {
+								"value": "@equals(item().type,'File' )",
+								"type": "Expression"
+							}
 						}
 					}
 				],
@@ -1229,7 +1277,7 @@
 				},
 				"variables": {
 					"filename": {
-						"type": "Array"
+						"type": "String"
 					},
 					"size": {
 						"type": "Integer"
