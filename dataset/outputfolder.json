@@ -5,11 +5,20 @@
 			"referenceName": "AzureDataLakeStorage",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"countryname": {
+				"type": "string"
+			}
+		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@concat(dataset().countryname, '.csv')",
+					"type": "Expression"
+				},
 				"folderPath": "output",
 				"fileSystem": "adf-learning-material"
 			},
