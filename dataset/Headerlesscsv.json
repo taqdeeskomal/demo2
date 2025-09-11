@@ -1,0 +1,60 @@
+{
+	"name": "Headerlesscsv",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "ordersNoHeaders.csv",
+				"fileSystem": "adf-learning-material"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": false,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "2016-01-01",
+				"type": "String"
+			},
+			{
+				"name": "336",
+				"type": "String"
+			},
+			{
+				"name": "Italy",
+				"type": "String"
+			},
+			{
+				"name": "Road-650 Black, 62",
+				"type": "String"
+			},
+			{
+				"name": "699.09824",
+				"type": "String"
+			},
+			{
+				"name": "699.09825",
+				"type": "String"
+			},
+			{
+				"name": "1",
+				"type": "String"
+			},
+			{
+				"name": "55.9279",
+				"type": "String"
+			},
+			{
+				"name": "413.1463",
+				"type": "String"
+			}
+		]
+	}
+}
