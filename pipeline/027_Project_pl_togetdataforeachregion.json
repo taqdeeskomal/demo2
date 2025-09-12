@@ -1,0 +1,122 @@
+{
+	"name": "027_Project_pl_togetdataforeachregion",
+	"properties": {
+		"activities": [
+			{
+				"name": "Set Region",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "VarCountry2",
+					"value": {
+						"value": "@pipeline().parameters.ParCountryName",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Get Rgion",
+				"type": "GetMetadata",
+				"dependsOn": [
+					{
+						"activity": "Set Region",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "CountryDataitr2",
+						"type": "DatasetReference",
+						"parameters": {
+							"ParCountryName": {
+								"value": "@variables('VarCountry2')",
+								"type": "Expression"
+							}
+						}
+					},
+					"fieldList": [
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "DelimitedTextReadSettings"
+					}
+				}
+			},
+			{
+				"name": "For Each Reigon",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Get Rgion",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get Rgion').output.childItems",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Set Region 2",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "Each Region",
+								"value": {
+									"value": "@item().name",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"ParCountryName": {
+				"type": "string"
+			}
+		},
+		"variables": {
+			"VarCountry2": {
+				"type": "String"
+			},
+			"VarRegion": {
+				"type": "String"
+			},
+			"Each Region": {
+				"type": "String"
+			}
+		},
+		"annotations": []
+	}
+}
