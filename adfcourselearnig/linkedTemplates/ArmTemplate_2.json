@@ -13,6 +13,508 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/csvfilesload')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "Input",
+						"fileSystem": "adf-learning-material"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/deletefile')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"deletefilename": {
+						"type": "array"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().deletefilename",
+							"type": "Expression"
+						},
+						"folderPath": "YearWise",
+						"fileSystem": "adf-learning-material"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/orders')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "orders.csv",
+						"fileSystem": "adf-learning-material"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "OrderDate",
+						"type": "String"
+					},
+					{
+						"name": "ProductKey",
+						"type": "String"
+					},
+					{
+						"name": "Country",
+						"type": "String"
+					},
+					{
+						"name": "EnglishProductName",
+						"type": "String"
+					},
+					{
+						"name": "SalesAmount",
+						"type": "String"
+					},
+					{
+						"name": "UnitPrice",
+						"type": "String"
+					},
+					{
+						"name": "OrderQuantity",
+						"type": "String"
+					},
+					{
+						"name": "TaxAmt",
+						"type": "String"
+					},
+					{
+						"name": "TotalProductCost",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ordersfile')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "orders.csv",
+						"fileSystem": "adf-learning-material"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "OrderDate",
+						"type": "String"
+					},
+					{
+						"name": "ProductKey",
+						"type": "String"
+					},
+					{
+						"name": "Country",
+						"type": "String"
+					},
+					{
+						"name": "EnglishProductName",
+						"type": "String"
+					},
+					{
+						"name": "SalesAmount",
+						"type": "String"
+					},
+					{
+						"name": "UnitPrice",
+						"type": "String"
+					},
+					{
+						"name": "OrderQuantity",
+						"type": "String"
+					},
+					{
+						"name": "TaxAmt",
+						"type": "String"
+					},
+					{
+						"name": "TotalProductCost",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/outputfolder')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"countryname": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@concat(dataset().countryname, '.csv')",
+							"type": "Expression"
+						},
+						"folderPath": "output",
+						"fileSystem": "adf-learning-material"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "invoiceId",
+						"type": "String"
+					},
+					{
+						"name": "billingAccountId",
+						"type": "String"
+					},
+					{
+						"name": "billingAccountName",
+						"type": "String"
+					},
+					{
+						"name": "previousInvoiceId",
+						"type": "String"
+					},
+					{
+						"name": "billingProfileId",
+						"type": "String"
+					},
+					{
+						"name": "billingProfileName",
+						"type": "String"
+					},
+					{
+						"name": "invoiceSectionId",
+						"type": "String"
+					},
+					{
+						"name": "invoiceSectionName",
+						"type": "String"
+					},
+					{
+						"name": "partnerTenantId",
+						"type": "String"
+					},
+					{
+						"name": "partnerName",
+						"type": "String"
+					},
+					{
+						"name": "resellerName",
+						"type": "String"
+					},
+					{
+						"name": "resellerMpnId",
+						"type": "String"
+					},
+					{
+						"name": "customerTenantId",
+						"type": "String"
+					},
+					{
+						"name": "customerName",
+						"type": "String"
+					},
+					{
+						"name": "costCenter",
+						"type": "String"
+					},
+					{
+						"name": "billingPeriodStartDate",
+						"type": "String"
+					},
+					{
+						"name": "billingPeriodEndDate",
+						"type": "String"
+					},
+					{
+						"name": "servicePeriodStartDate",
+						"type": "String"
+					},
+					{
+						"name": "servicePeriodEndDate",
+						"type": "String"
+					},
+					{
+						"name": "date",
+						"type": "String"
+					},
+					{
+						"name": "serviceFamily",
+						"type": "String"
+					},
+					{
+						"name": "productOrderId",
+						"type": "String"
+					},
+					{
+						"name": "productOrderName",
+						"type": "String"
+					},
+					{
+						"name": "consumedService",
+						"type": "String"
+					},
+					{
+						"name": "meterId",
+						"type": "String"
+					},
+					{
+						"name": "meterName",
+						"type": "String"
+					},
+					{
+						"name": "meterCategory",
+						"type": "String"
+					},
+					{
+						"name": "meterSubCategory",
+						"type": "String"
+					},
+					{
+						"name": "meterRegion",
+						"type": "String"
+					},
+					{
+						"name": "productId",
+						"type": "String"
+					},
+					{
+						"name": "product",
+						"type": "String"
+					},
+					{
+						"name": "subscriptionId",
+						"type": "String"
+					},
+					{
+						"name": "subscriptionName",
+						"type": "String"
+					},
+					{
+						"name": "publisherType",
+						"type": "String"
+					},
+					{
+						"name": "publisherId",
+						"type": "String"
+					},
+					{
+						"name": "publisherName",
+						"type": "String"
+					},
+					{
+						"name": "resourceGroupName",
+						"type": "String"
+					},
+					{
+						"name": "resourceId",
+						"type": "String"
+					},
+					{
+						"name": "resourceLocation",
+						"type": "String"
+					},
+					{
+						"name": "location",
+						"type": "String"
+					},
+					{
+						"name": "effectivePrice",
+						"type": "String"
+					},
+					{
+						"name": "quantity",
+						"type": "String"
+					},
+					{
+						"name": "unitOfMeasure",
+						"type": "String"
+					},
+					{
+						"name": "chargeType",
+						"type": "String"
+					},
+					{
+						"name": "billingCurrency",
+						"type": "String"
+					},
+					{
+						"name": "pricingCurrency",
+						"type": "String"
+					},
+					{
+						"name": "costInBillingCurrency",
+						"type": "String"
+					},
+					{
+						"name": "costInPricingCurrency",
+						"type": "String"
+					},
+					{
+						"name": "costInUsd",
+						"type": "String"
+					},
+					{
+						"name": "paygCostInBillingCurrency",
+						"type": "String"
+					},
+					{
+						"name": "paygCostInUsd",
+						"type": "String"
+					},
+					{
+						"name": "exchangeRatePricingToBilling",
+						"type": "String"
+					},
+					{
+						"name": "exchangeRateDate",
+						"type": "String"
+					},
+					{
+						"name": "isAzureCreditEligible",
+						"type": "String"
+					},
+					{
+						"name": "serviceInfo1",
+						"type": "String"
+					},
+					{
+						"name": "serviceInfo2",
+						"type": "String"
+					},
+					{
+						"name": "additionalInfo",
+						"type": "String"
+					},
+					{
+						"name": "tags",
+						"type": "String"
+					},
+					{
+						"name": "partnerEarnedCreditRate",
+						"type": "String"
+					},
+					{
+						"name": "partnerEarnedCreditApplied",
+						"type": "String"
+					},
+					{
+						"name": "payGPrice",
+						"type": "String"
+					},
+					{
+						"name": "frequency",
+						"type": "String"
+					},
+					{
+						"name": "term",
+						"type": "String"
+					},
+					{
+						"name": "reservationId",
+						"type": "String"
+					},
+					{
+						"name": "reservationName",
+						"type": "String"
+					},
+					{
+						"name": "pricingModel",
+						"type": "String"
+					},
+					{
+						"name": "unitPrice",
+						"type": "String"
+					},
+					{
+						"name": "costAllocationRuleName",
+						"type": "String"
+					},
+					{
+						"name": "provider",
+						"type": "String"
+					},
+					{
+						"name": "benefitId",
+						"type": "String"
+					},
+					{
+						"name": "benefitName",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/yearwisefolder')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -117,112 +619,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Country')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureDataLakeStorage",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": "output/Countries",
-						"fileSystem": "adf-learning-material"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "OrderDate",
-						"type": "String"
-					},
-					{
-						"name": "ProductKey",
-						"type": "String"
-					},
-					{
-						"name": "TaxAmt",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Countrywisedata')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureDataLakeStorage",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"CountryFile": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": {
-							"value": "@dataset().CountryFile",
-							"type": "Expression"
-						},
-						"folderPath": "output/Countries",
-						"fileSystem": "adf-learning-material"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "OrderDate",
-						"type": "String"
-					},
-					{
-						"name": "ProductKey",
-						"type": "String"
-					},
-					{
-						"name": "TaxAmt",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureSqlTableCountries')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSqlDatabase",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "Countries"
-				}
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/001_pl_copydata_dl_to_dl')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -296,7 +692,9 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/csvfilesload')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/001_project')]",
@@ -539,7 +937,9 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/csvfilesload')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/003_pl_copydata_dl_to_dl')]",
@@ -615,7 +1015,9 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/csvfilesload')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/004_pl_copydata_dl_db')]",
@@ -685,7 +1087,9 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/orders')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/005_pl_copydata_dl_to_SQL')]",
@@ -847,7 +1251,9 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/csvfilesload')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/007_GetMetadata_activity')]",
@@ -1353,116 +1759,6 @@
 						"outputs": [
 							{
 								"referenceName": "createdusingsqlsp",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/015_lookup_activity')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Lookupactivity",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "DelimitedTextSource",
-								"storeSettings": {
-									"type": "AzureBlobFSReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "DelimitedTextReadSettings"
-								}
-							},
-							"dataset": {
-								"referenceName": "CSVFile",
-								"type": "DatasetReference",
-								"parameters": {}
-							},
-							"firstRowOnly": false
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/017_pl_copydata_dl_dl_CSV_JSON')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy data CSV to JSOn",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "DelimitedTextSource",
-								"storeSettings": {
-									"type": "AzureBlobFSReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "DelimitedTextReadSettings"
-								}
-							},
-							"sink": {
-								"type": "JsonSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
-								},
-								"formatSettings": {
-									"type": "JsonWriteSettings"
-								}
-							},
-							"enableStaging": false
-						},
-						"inputs": [
-							{
-								"referenceName": "CSVFile1",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "Json",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
