@@ -1,0 +1,38 @@
+{
+	"name": "Countrydataitr3",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"ParamCountyName": {
+				"type": "string"
+			},
+			"ParamRegionName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().ParamRegionName",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@concat('output/CountryData/Input/',dataset().ParamCountyName)",
+					"type": "Expression"
+				},
+				"fileSystem": "adf-learning-material"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
