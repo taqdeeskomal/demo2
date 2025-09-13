@@ -1,5 +1,5 @@
 {
-	"name": "Countrydataitr3",
+	"name": "countrydata3",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "AzureDataLakeStorage",
@@ -10,6 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
+				"folderPath": "output/CountryData/Input",
 				"fileSystem": "adf-learning-material"
 			},
 			"columnDelimiter": ",",
