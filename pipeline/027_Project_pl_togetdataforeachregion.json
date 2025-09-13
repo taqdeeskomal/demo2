@@ -140,7 +140,7 @@
 										"type": "AzureBlobFSReadSettings",
 										"recursive": true,
 										"wildcardFolderPath": {
-											"value": "\n@concat('output/CountryData/Input/', pipeline().parameters.ParCountryName, '/', variables('Each Region'))",
+											"value": "@concat('output/CountryData/Input/', pipeline().parameters.ParCountryName, '/', variables('Each Region'))",
 											"type": "Expression"
 										},
 										"wildcardFileName": "*.xlsx",
