@@ -65,7 +65,8 @@
 								"parameters": {},
 								"datasetParameters": {
 									"source1": {},
-									"sink": {}
+									"sink": {},
+									"sink1": {}
 								}
 							},
 							"staging": {},
@@ -3832,6 +3833,27 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTable30')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "ordersnew2"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/AzureSqlTable4')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -6647,6 +6669,13 @@
 								"type": "DatasetReference"
 							},
 							"name": "sink"
+						},
+						{
+							"dataset": {
+								"referenceName": "AzureSqlTable30",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
 						}
 					],
 					"transformations": [
@@ -6654,7 +6683,13 @@
 							"name": "select1"
 						},
 						{
-							"name": "sort1"
+							"name": "filter1"
+						},
+						{
+							"name": "derivedColumn1"
+						},
+						{
+							"name": "split1"
 						}
 					],
 					"scriptLines": [
@@ -6684,8 +6719,11 @@
 						"     ),",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true) ~> select1",
-						"select1 sort(desc(OrderDate, true)) ~> sort1",
-						"sort1 sink(allowSchemaDrift: true,",
+						"select1 filter(Country!='Germany') ~> filter1",
+						"filter1 derive(YEAR = year(OrderDate)) ~> derivedColumn1",
+						"derivedColumn1 split(Country=='France',",
+						"     disjoint: false) ~> split1@(France, others)",
+						"split1@France sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     deletable:false,",
 						"     insertable:true,",
@@ -6694,13 +6732,24 @@
 						"     format: 'table',",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
-						"     errorHandlingOption: 'stopOnFirstError') ~> sink"
+						"     errorHandlingOption: 'stopOnFirstError') ~> sink",
+						"split1@others sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
 					]
 				}
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/Df_01_csv')]",
-				"[concat(variables('factoryId'), '/datasets/01_df_intro')]"
+				"[concat(variables('factoryId'), '/datasets/01_df_intro')]",
+				"[concat(variables('factoryId'), '/datasets/AzureSqlTable30')]"
 			]
 		}
 	]
