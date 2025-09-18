@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "003_df_join",
+						"referenceName": "003_df_lookup",
 						"type": "DataFlowReference"
 					},
 					"compute": {
