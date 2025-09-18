@@ -1,9 +1,9 @@
 {
-	"name": "003_df_lookup",
+	"name": "004_df_joins",
 	"properties": {
 		"activities": [
 			{
-				"name": "003_df_lookup",
+				"name": "Data flow",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "003_df_join",
+						"referenceName": "dataflow1",
 						"type": "DataFlowReference"
 					},
 					"compute": {
