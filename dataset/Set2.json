@@ -1,0 +1,40 @@
+{
+	"name": "Set2",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "Set2.csv",
+				"fileSystem": "adf-learning-material"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "EMPLOYEENAME",
+				"type": "String"
+			},
+			{
+				"name": "EMPLOYENAME",
+				"type": "String"
+			},
+			{
+				"name": "EMPSALARY",
+				"type": "String"
+			},
+			{
+				"name": "Monthname",
+				"type": "String"
+			}
+		]
+	}
+}
